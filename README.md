@@ -6,7 +6,13 @@
 
 <https://dawsondddddd.github.io/calculator_frontend/>
 
-这是开启 GitHub Pages 后的公开地址，任何人都能打开，用来查看页面和交互。页面本身不做任何计算：点击 `=` 时它把表达式发给后端接口，所以只有在访问者自己的电脑上按下面的步骤启动后端，计算和历史记录才会生效。没有启动后端时，页面仍可正常打开和输入，点 `=` 会提示“无法连接后端服务”。
+这是开启 GitHub Pages 后的公开地址，任何人都能打开并使用。页面本身不做任何计算：点击 `=` 时它把表达式发给 `API_BASE` 指向的后端接口，由后端完成计算并返回结果和历史记录。
+
+公开 Demo 的后端目前通过 Cloudflare Tunnel 暴露为：
+
+<https://humanitarian-consecutive-makes-deeper.trycloudflare.com>
+
+> 该隧道地址只在运行 `cloudflared` 的这台机器和进程保持运行时有效，重启后地址会变化。长期稳定的部署方式见 `backend/README.md`。
 
 ## 技术栈
 
@@ -63,13 +69,17 @@ python -m http.server 5500
 
 ## 配置说明
 
-后端地址在 `index.html` 的脚本开头：
+后端地址在 `index.html` 的脚本开头（`API_BASE`）：
 
 ```javascript
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://humanitarian-consecutive-makes-deeper.trycloudflare.com";
 ```
 
-如果后端换了地址或端口，修改这一行即可。
+本机联调时可以把它改回 `http://127.0.0.1:8000`；如果隧道地址变化，修改这一行即可。
+
+**为什么别人打不开 `http://127.0.0.1:8000`？**
+
+`127.0.0.1` 永远指向访问者自己的电脑，不是你的电脑。所以公开页面必须把 `API_BASE` 指向一个公网地址，例如上面的 Cloudflare Tunnel 地址；本机自测时才能用 `127.0.0.1`。
 
 ## 前后端连接方式
 
